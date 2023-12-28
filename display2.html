@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Dashboard</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            width: 100vw;
+            height: 100vw;
+            background: aliceblue;
+        }
+
+   
+        .dashboard {
+            width: 80%;
+            margin: 10px auto;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background: radial-gradient(#18e79c, transparent);
+            text-align: center;
+        }
+
+        .speedometer {
+            width: 100px;
+            border-radius: 400px;
+            margin: 30px;
+            padding: 30px;
+            width: 150px;
+            height: 150px;
+            box-shadow: 3px 3px 33px rgb(40 48 134);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .temperature {
+            display: inline-block;
+            width: 120px;
+            height: 80px;
+            margin: 5px;
+            padding: 5px;
+            border-radius: 10px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .battery {
+            display: inline-block;
+            margin: 5px;
+            width: 120px;
+            height: 80px;
+            padding: 5px;
+            border-radius: 10px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+
+        }
+
+
+        .speedometer div,
+        .battery div,
+        .temperature div {
+            margin: 0;
+            color: #333;
+        }
+
+        .value {
+            font-size: 38px;
+            font-weight: bold;
+            margin: 5px 0;
+            color: #007BFF;
+        }
+
+        .sValue {
+            font-size: 48px;
+            font-weight: bold;
+            margin: 5px 0;
+            color: #007BFF;
+        }
+
+        .unit {
+            font-size: 10px;
+            color: #666;
+        }
+
+        .side {
+            display: flex;
+            font-size: 1.2rem;
+            font-weight: bold;
+            flex-direction: column;
+            margin-left: 20px;
+            margin-right: 20px;
+        }
+
+        .deleteIp {
+            position: fixed;
+            top: 0;
+            left: 0;
+            margin: 10px;
+        }
+
+        @media only screen and (max-width: 600px) {
+
+            .side {
+                display: flex;
+                font-size: 1.2rem;
+                font-weight: bold;
+                flex-direction: row;
+                margin-left: 7px;
+
+            }
+
+            .temperature {
+                width: 90px;
+                height: 100px;
+            }
+
+            .battery {
+                width: 90px;
+                height: 100px;
+
+            }
+
+            .child:nth-child(2) {
+                order: -1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+
+    <button class="deleteIp" onclick="delteIp()">Clear IP</button>
+    <div class="dashboard">
+
+        <div class="side child">
+
+            <div class="battery">
+                <div>Battery</div>
+                <div class="value">80</div>
+                <div class="unit">%</div>
+            </div>
+            <div class="battery">
+                <div>Battery</div>
+                <div class="value">80</div>
+                <div class="unit">%</div>
+            </div>
+            <div class="battery">
+                <div>Battery</div>
+                <div class="value">80</div>
+                <div class="unit">%</div>
+            </div>
+        </div>
+
+        <div class="speedometer child">
+            <div>Speed</div>
+            <div class="sValue" id="speed">120</div>
+            <div class="unit">km/h</div>
+        </div>
+
+        <div class="side">
+
+            <div class="temperature">
+                <div>Temp</div>
+                <div class="value">25</div>
+                <div class="unit">&#8451;</div>
+            </div>
+            <div class="temperature">
+                <div>Temp</div>
+                <div class="value">25</div>
+                <div class="unit">&#8451;</div>
+            </div>
+            <div class="temperature">
+                <div>Temp</div>
+                <div class="value">25</div>
+                <div class="unit">&#8451;</div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const getIP = () => {
+            let myIp = prompt("Enter ip of ESP server");
+            console.log(myIp);
+            localStorage.setItem("IP", myIp);
+
+        }
+        if (localStorage.getItem("IP")) {
+            let IP = localStorage.getItem("IP");
+            console.log(IP);
+            function updateValues() {
+                let url = `http://${IP}/sender`
+                fetch(url).then((responce) => {
+                    return responce.json()
+                }).then((data) => {
+                    console.log(data, "this is data");
+                    document.getElementById('speed').innerText = data;
+                })
+            }
+
+
+            setInterval(updateValues, 500);
+        } else {
+            getIP();
+
+        }
+
+        function delteIp() {
+            localStorage.removeItem("IP");
+            getIP();
+        }
+
+
+
+
+    </script>
+</body>
+
+</html>
